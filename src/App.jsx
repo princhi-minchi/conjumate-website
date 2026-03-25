@@ -75,20 +75,20 @@ const App = () => {
       {/* --- MOBILE VERSION (md:hidden) --- */}
       <div className="md:hidden flex flex-col h-full w-full bg-white p-4">
         {/* Mobile Header: Enhanced Hero Section */}
-        <div className="flex items-center justify-between gap-4 mb-4">
+        <div className="flex items-center justify-start gap-4 mb-4">
           <motion.img 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             src={logo} 
             alt="Conjumate Logo" 
-            className="h-16 w-auto object-contain" 
+            className="h-14 w-auto object-contain" 
           />
           <motion.h1 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-            className="flex-1 text-3xl font-bold tracking-tight leading-none text-dark-teal text-center"
+            className="flex-1 text-[22px] font-bold tracking-tight leading-[1.1] text-dark-teal text-left"
           >
             Master <span className="text-accent">conjugations</span> <br /> 
             without leaving your tab
