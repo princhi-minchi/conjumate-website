@@ -247,7 +247,7 @@ const App = () => {
             transition={{ delay: 0.3 }}
             className="text-lg md:text-xl text-gray-500 font-medium mb-10 text-left"
           >
-            Translate and conjugate across 8 European languages.
+            Browser extension that translates and conjugates across 8 European languages.
           </motion.p>
 
           <motion.div
