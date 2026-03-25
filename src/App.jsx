@@ -245,7 +245,7 @@ const App = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-lg md:text-xl text-gray-500 font-medium mb-10 text-left"
+            className="text-lg md:text-lg text-gray-500 font-medium mb-6 text-left"
           >
             Browser extension that translates and conjugates across 8 European languages.
           </motion.p>
@@ -254,7 +254,7 @@ const App = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="mt-8"
+            className="mt-4"
           >
             {status === 'success' ? (
               <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 px-6 py-4 rounded-lg border border-emerald-100">
