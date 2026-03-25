@@ -230,13 +230,13 @@ const App = () => {
       </div>
 
       {/* Right Panel: Hero Section (Desktop) - Pushed Content Lower */}
-      <div className="hidden md:flex md:flex-grow flex-col justify-start pt-32 items-center px-20 py-12 min-h-screen relative bg-white">
+      <div className="hidden md:flex md:flex-grow flex-col justify-start pt-20 items-center px-20 py-12 min-h-screen relative bg-white">
         <div className="max-w-[600px] w-full">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold tracking-tight leading-tight text-dark-teal mb-6 text-left"
+            className="text-5xl md:text-6xl font-bold tracking-tight leading-tight text-dark-teal mb-6 text-left"
           >
             Master <span className="text-accent">conjugations</span> without leaving your tab.
           </motion.h1>
