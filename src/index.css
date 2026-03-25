@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+  --color-panel-bg: #F5F3FF;
+  --color-accent: #7747CF;
+  --color-dark-teal: #003333;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  html, body {
+    @apply h-auto min-h-screen md:h-screen md:overflow-hidden;
+  }
+  body {
+    @apply bg-white text-slate-900 antialiased font-sans m-0 p-0 overflow-x-hidden;
+  }
+}
+
+@layer components {
+  .btn-honeystyle {
+    @apply inline-flex items-center justify-center px-10 py-4 text-lg font-bold text-white 
+           bg-accent rounded-lg transition-all duration-300 
+           hover:brightness-110 active:scale-95 shadow-sm;
+  }
+
+  .input-honey {
+    @apply w-full md:w-80 px-6 py-4 rounded-lg bg-gray-50 border border-gray-200 
+           focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all font-medium text-lg;
+  }
+
+  .checkbox-honey {
+    @apply w-5 h-5 rounded border-gray-300 text-accent focus:ring-accent transition-all cursor-pointer;
+  }
+}
