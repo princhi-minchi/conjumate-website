@@ -230,7 +230,7 @@ const App = () => {
       </div>
 
       {/* Right Panel: Hero Section (Desktop) - Pushed Content Lower */}
-      <div className="hidden md:flex md:flex-grow flex-col justify-start pt-24 items-center px-20 py-12 min-h-screen relative bg-white">
+      <div className="hidden md:flex md:flex-grow flex-col justify-start pt-28 items-center px-20 py-12 min-h-screen relative bg-white">
         <div className="max-w-[600px] w-full">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
