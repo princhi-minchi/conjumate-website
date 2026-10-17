@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs><radialGradient id="glow"><stop stop-color="#efe5ff"/><stop offset="1" stop-color="#faf9fc"/></radialGradient></defs>
+  <rect width="1200" height="630" fill="#faf9fc"/>
+  <ellipse cx="1050" cy="500" rx="800" ry="600" fill="url(#glow)"/>
+  <rect x="64" y="58" width="44" height="44" rx="12" fill="#7747cf"/>
+  <path d="M94 70a13 13 0 1 0 0 20" fill="none" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  <text x="122" y="90" font-family="Arial,sans-serif" font-size="30" font-weight="700" fill="#173e3a">ConjuMate</text>
+  <text x="64" y="220" font-family="Arial,sans-serif" font-size="17" letter-spacing="3" fill="#7952ad">CONJUMATE FOR CHROME</text>
+  <text x="60" y="318" font-family="Arial,sans-serif" font-size="68" font-weight="700" letter-spacing="-3" fill="#173e3a">Conjugate and translate,</text>
+  <text x="60" y="410" font-family="Arial,sans-serif" font-size="68" font-weight="700" letter-spacing="-3" fill="#8353cf">without changing tabs</text>
+  <text x="64" y="474" font-family="Arial,sans-serif" font-size="23" fill="#636b70">Translations and verb conjugations, right where you read.</text>
+  <rect x="64" y="525" width="204" height="51" rx="10" fill="#7747cf"/>
+  <text x="93" y="557" font-family="Arial,sans-serif" font-size="19" font-weight="600" fill="white">Add to Chrome →</text>
+  <text x="301" y="557" font-family="Arial,sans-serif" font-size="17" fill="#596a65">Italian available now</text>
+  <text x="1026" y="568" font-family="Arial,sans-serif" font-size="17" fill="#7952ad">conjumate.com</text>
+</svg>
