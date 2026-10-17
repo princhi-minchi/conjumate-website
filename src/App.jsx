@@ -1,323 +1,409 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { CheckCircle2 } from 'lucide-react';
-import logo from './logo.png';
-import demoVideo from './demo.mp4';
-import PrivacyPolicy from './PrivacyPolicy';
+import { useState } from "react";
+import {
+  ArrowUp,
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  ChevronDown,
+  Command,
+  Menu,
+  MousePointer2,
+  Plus,
+  X,
+} from "lucide-react";
+import logo from "./logo2.png";
+import LookupPreview from "./LookupPreview";
+import ThemeToggle from "./ThemeToggle";
+import {
+  CHROME_STORE_URL,
+  PRIVACY_POLICY_URL,
+  faqs,
+  languages,
+} from "./content";
 
-const App = () => {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState('idle'); // idle, loading, success, error
-  const [errorMessage, setErrorMessage] = useState('');
-  const [consent, setConsent] = useState(false);
-  const [isPolicyOpen, setIsPolicyOpen] = useState(false);
-
-  const validateEmail = (email) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validateEmail(email)) {
-      setStatus('error');
-      setErrorMessage('Please enter a valid email address.');
-      return;
-    }
-
-    if (!consent) {
-      setStatus('error');
-      setErrorMessage('Please agree to the Privacy Policy to continue.');
-      return;
-    }
-
-    setStatus('loading');
-
-    try {
-      const SCRIPT_URL = import.meta.env.VITE_WAITLIST_URL;
-      
-      // Get the honeypot value if it exists
-      const formData = new FormData(e.target);
-      const hpValue = formData.get('hp_field');
-
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          hp_field: hpValue,
-          timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-          consent: true,
-          consentTimestamp: new Date().toISOString()
-        }),
-      });
-
-      setStatus('success');
-      setEmail('');
-    } catch (error) {
-      console.error('Error!', error.message);
-      setStatus('error');
-      setErrorMessage('Something went wrong. Please try again later.');
-    }
-  };
-
+function ChromeIcon() {
   return (
-    <div className="h-dvh w-screen flex flex-col md:flex-row bg-white overflow-hidden relative">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      className="chrome-icon"
+    >
+      <path
+        d="M12 2a10 10 0 0 1 8.66 5H12a5 5 0 0 0-4.33 2.5L4.78 4.5A9.96 9.96 0 0 1 12 2Z"
+        fill="#EA4335"
+      />
+      <path
+        d="M20.66 7a10 10 0 0 1-8.66 15l4.33-7.5A5 5 0 0 0 12 7h8.66Z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M12 22A10 10 0 0 1 4.78 4.5l4.33 7.5a5 5 0 0 0 7.22 2.5L12 22Z"
+        fill="#34A853"
+      />
+      <circle cx="12" cy="12" r="4.5" fill="#4285F4" stroke="white" />
+    </svg>
+  );
+}
 
-      {/* --- MOBILE VERSION (md:hidden) --- */}
-      <div className="md:hidden flex flex-col h-full w-full bg-white p-4">
-        {/* Mobile Header: Enhanced Hero Section */}
-        <div className="flex items-center justify-start gap-4 mb-4">
-          <motion.img 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            src={logo} 
-            alt="Conjumate Logo" 
-            className="h-14 w-auto object-contain" 
-          />
-          <motion.h1 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-            className="flex-1 text-[22px] font-bold tracking-tight leading-[1.1] text-dark-teal text-left"
+function InstallLink({ className = "", compact = false }) {
+  return (
+    <a
+      className={`button button-primary ${className}`}
+      href={CHROME_STORE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {!compact && <ChromeIcon />}Add to Chrome
+      {compact ? (
+        <ArrowUpRight size={16} aria-hidden="true" />
+      ) : (
+        <ArrowRight size={18} aria-hidden="true" />
+      )}
+    </a>
+  );
+}
+
+function Brand() {
+  return (
+    <a className="brand" href="#top" aria-label="ConjuMate home">
+      <img src={logo} alt="" width="403" height="481" />
+      <span>
+        Conju<span className="brand-accent">Mate</span>
+      </span>
+    </a>
+  );
+}
+
+function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
+  return (
+    <header
+      className="site-header"
+      onKeyDown={(event) => {
+        if (event.key === "Escape") closeMenu();
+      }}
+    >
+      <div className="header-inner container">
+        <Brand />
+        <nav className="desktop-nav" aria-label="Main navigation">
+          <a href="#how-it-works">How it works</a>
+          <a href="#languages">Languages</a>
+        </nav>
+        <div className="header-actions">
+          <ThemeToggle />
+          <InstallLink compact className="header-install" />
+          <button
+            className="menu-toggle icon-button"
+            type="button"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMenuOpen(!menuOpen)}
           >
-            Master <span className="text-accent">conjugations</span> <br /> 
-            without leaving your tab
-          </motion.h1>
-        </div>
-
-        {/* Mobile Main Frame (Further increased height) */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="h-[58dvh] min-h-0 bg-[#F5F3FF] rounded-[2.5rem] border-2 border-gray-100 p-4 flex flex-col items-center justify-center gap-3 relative overflow-hidden shadow-sm"
-        >
-          {/* Framed Video Container - Further Increased Height */}
-          <div className="relative w-full max-w-[350px] max-h-[470px] aspect-[9/16] rounded-2xl overflow-hidden shadow-lg border-[4px] border-white/50 bg-white/20">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="h-full w-full object-cover"
-            >
-              <source src={demoVideo} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
-          </div>
-
-          {/* Subtitle inside the frame - Larger Size */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-center px-4"
-          >
-            <p className="text-sm text-gray-500 font-semibold leading-relaxed">
-              Browser extension that translates and conjugates across 8 European languages.
-            </p>
-          </motion.div>
-        </motion.div>
-
-        {/* Mobile Waitlist Section (Bottom) */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-4 flex flex-col items-center gap-3"
-        >
-          {status === 'success' ? (
-            <motion.div 
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="flex items-center gap-3 text-emerald-600 bg-emerald-50 px-4 py-3 rounded-lg border border-emerald-100 w-full justify-center"
-            >
-              <CheckCircle2 className="w-5 h-5" />
-              <span className="font-bold text-sm">You're on the list!</span>
-            </motion.div>
-          ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="input-honey w-full !py-3 !text-base"
-                disabled={status === 'loading'}
-              />
-              {/* --- HONEYPOT FIELD --- */}
-              <div style={{ display: 'none' }} aria-hidden="true">
-                <input type="text" name="hp_field" tabIndex="-1" autoComplete="off" />
-              </div>
-              <div className="flex items-start gap-3 px-1 mb-2">
-                <input
-                  type="checkbox"
-                  id="mobile-consent"
-                  checked={consent}
-                  onChange={(e) => setConsent(e.target.checked)}
-                  className="checkbox-honey mt-1"
-                  required
-                />
-                <label htmlFor="mobile-consent" className="text-[13px] text-gray-500 leading-tight">
-                  I agree to the <button type="button" onClick={() => setIsPolicyOpen(true)} className="text-accent font-semibold hover:underline">Privacy Policy</button> and to receive updates.
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                className="btn-honeystyle w-full !py-3 !text-base"
-                disabled={status === 'loading'}
-              >
-                {status === 'loading' ? 'Joining...' : 'Join the waitlist'}
-              </button>
-              {status === 'error' && (
-                <p className="text-rose-600 text-xs font-medium flex items-center gap-2 justify-center">
-                  <span className="w-1 h-1 rounded-full bg-rose-600" />
-                  {errorMessage}
-                </p>
-              )}
-            </form>
-          )}
-          
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="text-gray-400 text-[11px] font-semibold"
-          >
-            Join 100+ learners already on the waitlist.
-          </motion.p>
-        </motion.div>
-      </div>
-
-      {/* --- DESKTOP VERSION (md:flex) --- */}
-      {/* Desktop-Only Logo Container - Pushed Higher */}
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="hidden md:flex md:absolute md:top-8 md:right-0 md:w-[60%] md:justify-center z-20"
-      >
-        <img src={logo} alt="Conjumate Logo" className="h-[82px] w-auto object-contain" />
-      </motion.div>
-
-      {/* Left Panel: Demo Section (Desktop) */}
-      <div className="hidden md:flex md:w-[40%] bg-panel-bg flex-col items-center justify-center relative overflow-hidden h-screen">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1 }}
-          className="relative w-full h-full flex items-center justify-center p-16"
-        >
-          <div className="relative w-full h-full max-w-[90%] max-h-[90%] rounded-2xl overflow-hidden shadow-2xl border-[6px] border-white/30 bg-white/5">
-            <video autoPlay loop muted playsInline className="h-full w-full object-cover">
-              <source src={demoVideo} type="video/mp4" />
-            </video>
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Right Panel: Hero Section (Desktop) - Pushed Content Lower */}
-      <div className="hidden md:flex md:flex-grow flex-col justify-start pt-32 items-center px-20 py-12 min-h-screen relative bg-white">
-        <div className="max-w-[600px] w-full">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-5xl md:text-6xl font-bold tracking-tight leading-tight text-dark-teal mb-6 text-left"
-          >
-            Master <span className="text-accent">conjugations</span> without leaving your tab.
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-lg md:text-lg text-gray-500 font-medium mb-6 text-left"
-          >
-            Browser extension that translates and conjugates across 8 European languages.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mt-4"
-          >
-            {status === 'success' ? (
-              <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 px-6 py-4 rounded-lg border border-emerald-100">
-                <CheckCircle2 className="w-6 h-6" />
-                <span className="font-bold">You're on the list! We'll be in touch soon.</span>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="input-honey"
-                    disabled={status === 'loading'}
-                  />
-                  {/* --- HONEYPOT FIELD --- */}
-                  <div style={{ display: 'none' }} aria-hidden="true">
-                    <input type="text" name="hp_field" tabIndex="-1" autoComplete="off" />
-                  </div>
-                  <button
-                    type="submit"
-                    className="btn-honeystyle whitespace-nowrap"
-                    disabled={status === 'loading'}
-                  >
-                    {status === 'loading' ? 'Joining...' : 'Join the waitlist'}
-                  </button>
-                </div>
-                <div className="flex items-start gap-3 px-1 mt-4">
-                  <input
-                    type="checkbox"
-                    id="desktop-consent"
-                    checked={consent}
-                    onChange={(e) => setConsent(e.target.checked)}
-                    className="checkbox-honey mt-1"
-                    required
-                  />
-                  <label htmlFor="desktop-consent" className="text-sm text-gray-500 leading-tight">
-                    I agree to the <button type="button" onClick={() => setIsPolicyOpen(true)} className="text-accent font-semibold hover:underline border-none p-0 bg-transparent cursor-pointer">Privacy Policy</button> and to receive updates about Conjumate.
-                  </label>
-                </div>
-
-                {status === 'error' && (
-                  <p className="text-rose-600 text-sm font-medium flex items-center gap-2 mt-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
-                    {errorMessage}
-                  </p>
-                )}
-              </form>
-            )}
-            
-            <p className="mt-6 text-gray-400 text-sm font-medium">
-              Join 100+ learners already on the waitlist.
-            </p>
-          </motion.div>
+            {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+          </button>
         </div>
       </div>
-      <PrivacyPolicy isOpen={isPolicyOpen} onClose={() => setIsPolicyOpen(false)} />
+      {menuOpen && (
+        <nav
+          id="mobile-menu"
+          className="mobile-nav"
+          aria-label="Mobile navigation"
+        >
+          <a href="#how-it-works" onClick={closeMenu}>
+            How it works <ArrowUpRight size={16} aria-hidden="true" />
+          </a>
+          <a href="#languages" onClick={closeMenu}>
+            Languages <ArrowUpRight size={16} aria-hidden="true" />
+          </a>
+          <InstallLink />
+        </nav>
+      )}
+    </header>
+  );
+}
+
+function InstallIllustration() {
+  return (
+    <div
+      className="step-illustration install-illustration"
+      role="img"
+      aria-label="Chrome Web Store shopping bag with the Chrome logo"
+    >
+      <div className="store-bag">
+        <ChromeIcon />
+      </div>
+      <span>Chrome Web Store</span>
     </div>
   );
-};
+}
+
+function ShortcutIllustration() {
+  return (
+    <div
+      className="step-illustration shortcut-illustration"
+      role="img"
+      aria-label="Hold Ctrl or Command and click the highlighted Italian verb legge"
+    >
+      <div className="shortcut-keys">
+        <kbd>Ctrl</kbd>
+        <span>/</span>
+        <kbd>
+          <Command size={18} aria-hidden="true" />
+        </kbd>
+        <Plus size={16} aria-hidden="true" />
+        <MousePointer2 size={19} aria-hidden="true" />
+      </div>
+      <div className="shortcut-example" lang="it">
+        Sofia <mark>legge</mark> ogni mattina.
+        <MousePointer2 size={22} aria-hidden="true" />
+      </div>
+    </div>
+  );
+}
+
+function ResultIllustration() {
+  return (
+    <div
+      className="step-illustration result-illustration"
+      role="img"
+      aria-label="Example lookup: legge means she or he reads; io leggo and tu leggi are two conjugations of leggere"
+    >
+      <div className="result-reading-lines" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </div>
+      <div className="result-example">
+        <div className="result-example-heading">
+          <strong lang="it">legge</strong>
+          <span lang="it">leggere</span>
+        </div>
+        <span className="result-example-meaning">she / he reads</span>
+        <div className="result-example-forms" lang="it">
+          <span>
+            io <b>leggo</b>
+          </span>
+          <span>
+            tu <b>leggi</b>
+          </span>
+        </div>
+        <span className="result-check">
+          <Check size={14} aria-hidden="true" />
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <>
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+      <Header />
+      <main id="main-content">
+        <section className="hero" id="top" aria-labelledby="hero-heading">
+          <div className="hero-glow" aria-hidden="true" />
+          <div className="container hero-inner">
+            <h1 id="hero-heading">
+              Conjugate and Translate,
+              <br />
+              <span>Without Changing Tabs</span>
+            </h1>
+            <p className="hero-description">
+              Instant translations and verb conjugations, right where you read.
+            </p>
+            <div className="hero-actions">
+              <InstallLink />
+            </div>
+            <LookupPreview />
+          </div>
+        </section>
+        <section
+          className="how-section section-space"
+          id="how-it-works"
+          aria-labelledby="how-heading"
+        >
+          <div className="container how-grid">
+            <div className="how-copy">
+              <h2 id="how-heading">A new word. A familiar feeling.</h2>
+              <p className="section-description">
+                ConjuMate fits into the way you already browse. Here’s how to
+                get started.
+              </p>
+              <ol className="steps">
+                <li>
+                  <InstallIllustration />
+                  <div className="step-copy">
+                    <span className="step-number">01</span>
+                    <div>
+                      <h3>Make yourself at home</h3>
+                      <p>Add ConjuMate to Chrome from the Chrome Web Store.</p>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <ShortcutIllustration />
+                  <div className="step-copy">
+                    <span className="step-number">02</span>
+                    <div>
+                      <h3>Find a word that sparks curiosity</h3>
+                      <p>
+                        Read something in Italian. Use Cmd/Ctrl + Click on a
+                        word to look it up.
+                      </p>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <ResultIllustration />
+                  <div className="step-copy">
+                    <span className="step-number">03</span>
+                    <div>
+                      <h3>Understand it. Keep reading.</h3>
+                      <p>
+                        See its meaning, explore the conjugations, and pick up
+                        right where you left off.
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+              <a
+                className="text-link"
+                href={CHROME_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Give your next read a little help{" "}
+                <ArrowUpRight size={18} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+        </section>
+        <section
+          className="languages-section section-space container"
+          id="languages"
+          aria-labelledby="languages-heading"
+        >
+          <div className="section-heading">
+            <h2 id="languages-heading">
+              Four languages.
+              <br />A world of stories.
+            </h2>
+            <p>
+              Start exploring Italian today.
+              <br />
+              Spanish, French, and Portuguese are on the way.
+            </p>
+          </div>
+          <div className="language-grid">
+            {languages.map((language) => (
+              <article
+                key={language.name}
+                className={`language-card ${language.available ? "available" : ""}`}
+              >
+                <span
+                  className="language-flag"
+                  role="img"
+                  aria-label={`${language.name} flag`}
+                >
+                  {language.flag}
+                </span>
+                <span className="language-greeting" lang={language.code}>
+                  {language.greeting}
+                </span>
+                <h3>{language.name}</h3>
+                <span
+                  className={`availability ${language.available ? "live" : ""}`}
+                >
+                  {language.available && <span className="status-dot" />}
+                  {language.available ? "Available now" : "Coming soon"}
+                </span>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section
+          className="faq-section section-space container"
+          aria-labelledby="faq-heading"
+        >
+          <div className="faq-intro">
+            <span className="eyebrow">A FEW THINGS TO KNOW</span>
+            <h2 id="faq-heading">
+              Curious? <br />
+              Good.
+            </h2>
+          </div>
+          <div className="faq-list">
+            {faqs.map((faq) => (
+              <details key={faq.question}>
+                <summary>
+                  {faq.question}
+                  <ChevronDown size={19} aria-hidden="true" />
+                </summary>
+                <div className="faq-answer">
+                  {faq.answer}
+                  {faq.privacy && (
+                    <>
+                      {" "}
+                      Read the{" "}
+                      <a
+                        href={PRIVACY_POLICY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        privacy policy{" "}
+                        <ArrowUpRight size={13} aria-hidden="true" />
+                      </a>{" "}
+                      for details.
+                    </>
+                  )}
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+        <section
+          className="closing-section container"
+          aria-labelledby="closing-heading"
+        >
+          <h2 id="closing-heading">
+            Your next “aha”
+            <br />
+            is a click away.
+          </h2>
+          <InstallLink />
+        </section>
+      </main>
+      <footer className="site-footer container">
+        <div>
+          <Brand />
+        </div>
+        <nav aria-label="Footer navigation">
+          <a href="#how-it-works">How it works</a>
+          <a href="#languages">Languages</a>
+          <a
+            href={PRIVACY_POLICY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Privacy policy <ArrowUpRight size={13} aria-hidden="true" />
+          </a>
+        </nav>
+        <span className="copyright">
+          © {new Date().getFullYear()} ConjuMate
+        </span>
+      </footer>
+      <a className="back-to-top" href="#top" aria-label="Back to top">
+        <ArrowUp size={18} aria-hidden="true" />
+      </a>
+    </>
+  );
+}
 
 export default App;
-
